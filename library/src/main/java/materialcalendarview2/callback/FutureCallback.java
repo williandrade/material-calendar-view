@@ -19,22 +19,23 @@ import static materialcalendarview2.util.CalendarUtil.isWeekend;
  * @author jonatan.salas
  */
 public final class FutureCallback implements CallBack<List<DayTime>> {
-    private final Calendar calendar;
+    private final MonthDisplayHelper helper;
+    private final List<DayTime> list;
     private final int index;
 
     public FutureCallback(final Calendar calendar, final int index) {
-        this.calendar = calendar;
+        this.helper = new MonthDisplayHelper(
+                getYear(calendar),
+                getMonth(calendar),
+                getFirstDayOfWeek(calendar)
+        );
+
+        this.list = new ArrayList<>(42);
         this.index = index;
     }
 
     @Override
     public List<DayTime> execute() {
-        final int year = getYear(calendar);
-        final int month = getMonth(calendar);
-        final int firstDayOfWeek = getFirstDayOfWeek(calendar);
-
-        final MonthDisplayHelper helper = new MonthDisplayHelper(year, month, firstDayOfWeek);
-        final List<DayTime> dayTimeList = new ArrayList<>(42);
 
         //TODO JS: Evaluate this code.
         for (int i = 0; i < 6; i++) {
@@ -60,7 +61,7 @@ public final class FutureCallback implements CallBack<List<DayTime>> {
                                 .setWeekend(true)
                                 .setEventList(null);
 
-                        dayTimeList.add(dayTime);
+                        list.add(dayTime);
                     } else if (n[d] == calendar.get(Calendar.DAY_OF_MONTH) && index == 0) {
                         DayTime dayTime = new DayTime()
                                 .setDay(n[d])
@@ -72,7 +73,7 @@ public final class FutureCallback implements CallBack<List<DayTime>> {
                                 .setWeekend(false)
                                 .setEventList(null);
 
-                        dayTimeList.add(dayTime);
+                        list.add(dayTime);
                     } else if (isWeekend(calendar)) {
                         DayTime dayTime = new DayTime()
                                 .setDay(n[d])
@@ -84,7 +85,7 @@ public final class FutureCallback implements CallBack<List<DayTime>> {
                                 .setWeekend(true)
                                 .setEventList(null);
 
-                        dayTimeList.add(dayTime);
+                        list.add(dayTime);
                     } else {
                         final DayTime dayTime = new DayTime()
                                 .setDay(n[d])
@@ -96,7 +97,7 @@ public final class FutureCallback implements CallBack<List<DayTime>> {
                                 .setWeekend(false)
                                 .setEventList(null);
 
-                        dayTimeList.add(dayTime);
+                        list.add(dayTime);
                     }
 
                 } else {
@@ -117,11 +118,11 @@ public final class FutureCallback implements CallBack<List<DayTime>> {
                             .setWeekend(false)
                             .setEventList(null);
 
-                    dayTimeList.add(dayTime);
+                    list.add(dayTime);
                 }
             }
         }
 
-        return dayTimeList;
+        return list;
     }
 }

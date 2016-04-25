@@ -38,7 +38,6 @@ import java.util.Locale;
 
 import materialcalendarview2.R;
 import materialcalendarview2.model.DayTime;
-import materialcalendarview2.model.Event;
 import materialcalendarview2.util.ContextUtils;
 
 import static materialcalendarview2.util.CalendarUtil.getShortWeekDays;
@@ -259,8 +258,7 @@ public class MaterialCalendarView extends LinearLayout {
                         view,
                         dayTime.getYear(),
                         dayTime.getMonth(),
-                        dayTime.getDay(),
-                        dayTime.getEventList()
+                        dayTime.getDay()
                 );
             }
         });
@@ -271,8 +269,7 @@ public class MaterialCalendarView extends LinearLayout {
                         view,
                         dayTime.getYear(),
                         dayTime.getMonth(),
-                        dayTime.getDay(),
-                        dayTime.getEventList()
+                        dayTime.getDay()
                 );
             }
         });
@@ -341,9 +338,8 @@ public class MaterialCalendarView extends LinearLayout {
          * @param year The year that was set.
          * @param month The month that was set [0-11].
          * @param dayOfMonth The day of the month that was set.
-         * @param eventList The list of events associated to this date selected.
          */
-        void onDayViewClick(@NonNull View view, int year, int month, int dayOfMonth, @Nullable List<Event> eventList);
+        void onDayViewClick(@NonNull View view, int year, int month, int dayOfMonth);
     }
 
     /**
@@ -362,7 +358,7 @@ public class MaterialCalendarView extends LinearLayout {
          * @param dayOfMonth The day of the month that was set.
          * @param eventList The list of events associated to this date selected.
          */
-        void onDayViewLongClick(@NonNull View view, int year, int month, int dayOfMonth, @Nullable List<Event> eventList);
+        void onDayViewLongClick(@NonNull View view, int year, int month, int dayOfMonth);
     }
 
     /**

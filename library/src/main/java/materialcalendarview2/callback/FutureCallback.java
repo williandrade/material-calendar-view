@@ -38,10 +38,10 @@ public final class FutureCallback implements CallBack<List<DayTime>> {
     public List<DayTime> execute() {
 
         //TODO JS: Evaluate this code.
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i <= 5; i++) {
             int n[] = helper.getDigitsForRow(i);
 
-            for (int d = 0; d < 7; d++) {
+            for (int d = 0; d <= 6; d++) {
                 if (helper.isWithinCurrentMonth(i, d)) {
                     Calendar calendar = Calendar.getInstance(Locale.getDefault());
                     calendar.set(Calendar.DAY_OF_MONTH, n[d]);

@@ -17,6 +17,7 @@ package materialcalendarview2.model;
 
 import android.support.annotation.Nullable;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -33,6 +34,7 @@ public class DayTime {
     private boolean weekend;
 
     @Nullable
+    //TODO: delete this
     private List<Event> eventList;
 
     public DayTime() { }

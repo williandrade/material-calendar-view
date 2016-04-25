@@ -61,6 +61,7 @@ public final class CalendarUtil {
         final String[] array = new DateFormatSymbols(Locale.getDefault()).getShortWeekdays();
         return Arrays.asList(array);
     }
+
     public static int calculateWeekIndex(final Calendar calendar, final int weekIndex) {
         int firstDayWeekPosition = calendar.getFirstDayOfWeek();
         if (firstDayWeekPosition == 1) {

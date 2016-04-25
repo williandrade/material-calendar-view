@@ -39,14 +39,20 @@ public final class MonthListHelper {
     }
 
     public List<DayTime> onInitMonth() {
-        return null;
+        return getList();
     }
 
     public List<DayTime> onNextMonth() {
-        return null;
+        helper.nextMonth();
+        return getList();
     }
 
     public List<DayTime> onPreviousMonth() {
+        helper.previousMonth();
+        return getList();
+    }
+
+    private List<DayTime> getList() {
         return null;
     }
 //

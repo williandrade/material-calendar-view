@@ -22,8 +22,10 @@ import com.samsistemas.calendarview.widget.CalendarView;
 import com.samsistemas.calendarview.widget.DayView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -60,7 +62,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        List<Date> events = new ArrayList<>();
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DAY_OF_MONTH, 10);
+        events.add(cal.getTime());
+
+        Calendar cal1 = Calendar.getInstance();
+        cal1.set(Calendar.DAY_OF_MONTH, 25);
+        events.add(cal1.getTime());
+
         calendarView = (CalendarView) findViewById(R.id.calendar_view);
+
+        calendarView.setEventDates(events);
 
         calendarView.setFirstDayOfWeek(Calendar.MONDAY);
         calendarView.setIsOverflowDateVisible(true);

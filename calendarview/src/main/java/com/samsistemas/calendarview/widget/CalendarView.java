@@ -51,6 +51,8 @@ import com.samsistemas.calendarview.decor.DayDecorator;
 import com.samsistemas.calendarview.utility.CalendarUtility;
 
 import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -160,6 +162,7 @@ public class CalendarView extends LinearLayout {
     private int mSelectedDayTextColor;
     private int mCalendarTitleTextColor;
     private int mDayOfWeekTextColor;
+    private int mDayOfWeekTextEventColor;
     private int mCurrentDayOfMonth;
     private int mWeekendColor;
     private int mWeekend;
@@ -168,6 +171,8 @@ public class CalendarView extends LinearLayout {
     private boolean mIsOverflowDateVisible = true;
     private int mFirstDayOfWeek = Calendar.SUNDAY;
     private int mCurrentMonthIndex = 0;
+
+    private List<Date> eventDates = new ArrayList<>();
 
     // Day of weekend
     private int[] mTotalDayOfWeekend;
@@ -193,7 +198,7 @@ public class CalendarView extends LinearLayout {
      * Context used to get the resources.
      *
      * @param context - the context used to get the resources.
-     * @param attrs - attribute set with custom styles.
+     * @param attrs   - attribute set with custom styles.
      */
     public CalendarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -222,6 +227,7 @@ public class CalendarView extends LinearLayout {
 
         final int white = ContextCompat.getColor(mContext, android.R.color.white);
         final int black = ContextCompat.getColor(mContext, android.R.color.black);
+        final int eventColor = ContextCompat.getColor(mContext, R.color.event_day_text_color);
         final int dayDisableBackground = ContextCompat.getColor(mContext, R.color.day_disabled_background_color);
         final int dayDisableTextColor = ContextCompat.getColor(mContext, R.color.day_disabled_text_color);
         final int daySelectedBackground = ContextCompat.getColor(mContext, R.color.selected_day_background);
@@ -234,6 +240,7 @@ public class CalendarView extends LinearLayout {
             mCalendarTitleTextColor = a.getColor(R.styleable.MaterialCalendarView_calendarTitleTextColor, black);
             mWeekLayoutBackgroundColor = a.getColor(R.styleable.MaterialCalendarView_weekLayoutBackgroundColor, white);
             mDayOfWeekTextColor = a.getColor(R.styleable.MaterialCalendarView_dayOfWeekTextColor, black);
+            mDayOfWeekTextEventColor = a.getColor(R.styleable.MaterialCalendarView_dayOfWeekTextEventColor, eventColor);
             mDisabledDayBackgroundColor = a.getColor(R.styleable.MaterialCalendarView_disabledDayBackgroundColor, dayDisableBackground);
             mDisabledDayTextColor = a.getColor(R.styleable.MaterialCalendarView_disabledDayTextColor, dayDisableTextColor);
             mSelectedDayBackground = a.getColor(R.styleable.MaterialCalendarView_selectedDayBackgroundColor, daySelectedBackground);
@@ -352,7 +359,7 @@ public class CalendarView extends LinearLayout {
             dayOfWeek = (TextView) mView.findViewWithTag(mContext.getString(R.string.day_of_week) + CalendarUtility.getWeekIndex(i, mCalendar));
             dayOfWeek.setText(dayOfTheWeekString);
             mIsCommonDay = true;
-            if(totalDayOfWeekend().length != 0) {
+            if (totalDayOfWeekend().length != 0) {
                 for (int weekend : totalDayOfWeekend()) {
                     if (i == weekend) {
                         dayOfWeek.setTextColor(mWeekendColor);
@@ -361,7 +368,7 @@ public class CalendarView extends LinearLayout {
                 }
             }
 
-            if(mIsCommonDay) {
+            if (mIsCommonDay) {
                 dayOfWeek.setTextColor(mDayOfWeekTextColor);
             }
 
@@ -513,7 +520,7 @@ public class CalendarView extends LinearLayout {
                 dayOfMonthContainer.setOnLongClickListener(onDayOfMonthLongClickListener);
                 dayView.setBackgroundColor(mCalendarBackgroundColor);
                 mIsCommonDay = true;
-                if(totalDayOfWeekend().length != 0) {
+                if (totalDayOfWeekend().length != 0) {
                     for (int weekend : totalDayOfWeekend()) {
                         if (startCalendar.get(Calendar.DAY_OF_WEEK) == weekend) {
                             dayView.setTextColor(mWeekendColor);
@@ -522,7 +529,7 @@ public class CalendarView extends LinearLayout {
                     }
                 }
 
-                if(mIsCommonDay) {
+                if (mIsCommonDay) {
                     dayView.setTextColor(mDayOfWeekTextColor);
                 }
             } else {
@@ -535,10 +542,17 @@ public class CalendarView extends LinearLayout {
                     dayView.setVisibility(View.GONE);
                 }
             }
+
+            //HAVE EVENT
+            if (this.containsEvent(dayView.getDate())) {
+                dayView.setTextColor(mDayOfWeekTextEventColor);
+            }
+
+
             dayView.decorate();
 
             //Set the current day color
-            if(mCalendar.get(Calendar.MONTH) == startCalendar.get(Calendar.MONTH) )
+            if (mCalendar.get(Calendar.MONTH) == startCalendar.get(Calendar.MONTH))
                 setCurrentDay(mCalendar.getTime());
 
             startCalendar.add(Calendar.DATE, 1);
@@ -555,6 +569,16 @@ public class CalendarView extends LinearLayout {
         }
     }
 
+    private boolean containsEvent(Date date) {
+        SimpleDateFormat spd = new SimpleDateFormat("dd/MM");
+        for (Date day : eventDates) {
+            if (spd.format(date).equals(spd.format(day))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void clearDayOfTheMonthStyle(Date currentDate) {
         if (currentDate != null) {
             final Calendar calendar = CalendarUtility.getTodayCalendar(mContext, mFirstDayOfWeek);
@@ -564,7 +588,7 @@ public class CalendarView extends LinearLayout {
             final DayView dayView = findViewByCalendar(calendar);
             dayView.setBackgroundColor(mCalendarBackgroundColor);
             mIsCommonDay = true;
-            if(totalDayOfWeekend().length != 0) {
+            if (totalDayOfWeekend().length != 0) {
                 for (int weekend : totalDayOfWeekend()) {
                     if (calendar.get(Calendar.DAY_OF_WEEK) == weekend) {
                         dayView.setTextColor(mWeekendColor);
@@ -573,8 +597,13 @@ public class CalendarView extends LinearLayout {
                 }
             }
 
-            if(mIsCommonDay) {
+            if (mIsCommonDay) {
                 dayView.setTextColor(mDayOfWeekTextColor);
+            }
+
+            //HAVE EVENT
+            if (this.containsEvent(dayView.getDate())) {
+                dayView.setTextColor(mDayOfWeekTextEventColor);
             }
         }
     }
@@ -614,11 +643,11 @@ public class CalendarView extends LinearLayout {
 
     private void setTotalDayOfWeekend() {
         int[] weekendDay = new int[Integer.bitCount(mWeekend)];
-        char days[]= Integer.toBinaryString(mWeekend).toCharArray();
+        char days[] = Integer.toBinaryString(mWeekend).toCharArray();
         int day = 1;
         int index = 0;
-        for(int i = days.length - 1; i >= 0; i--) {
-            if(days[i] == '1') {
+        for (int i = days.length - 1; i >= 0; i--) {
+            if (days[i] == '1') {
                 weekendDay[index] = day;
                 index++;
             }
@@ -765,12 +794,12 @@ public class CalendarView extends LinearLayout {
     /**
      * Tests scroll ability within child views of v given a delta of dx.
      *
-     * @param v View to test for horizontal scroll ability
+     * @param v      View to test for horizontal scroll ability
      * @param checkV Whether the view v passed should itself be checked for scrollability (true),
      *               or just its children (false).
-     * @param dx Delta scrolled in pixels
-     * @param x X coordinate of the active touch point
-     * @param y Y coordinate of the active touch point
+     * @param dx     Delta scrolled in pixels
+     * @param x      X coordinate of the active touch point
+     * @param y      Y coordinate of the active touch point
      * @return true if child views of v can be scrolled by delta of dx.
      */
     protected boolean canScroll(View v, boolean checkV, int dx, int x, int y) {
@@ -821,7 +850,7 @@ public class CalendarView extends LinearLayout {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if(null != mGestureDetector) {
+        if (null != mGestureDetector) {
             mGestureDetector.onTouchEvent(ev);
             super.dispatchTouchEvent(ev);
             return true;
@@ -988,7 +1017,7 @@ public class CalendarView extends LinearLayout {
                                 mOnMonthChangedListener.onMonthChanged(mCalendar.getTime());
                             }
 
-                        } else if(e1.getX() - e2.getX() > mFlingDistance) {
+                        } else if (e1.getX() - e2.getX() > mFlingDistance) {
                             mCurrentMonthIndex++;
                             mCalendar = Calendar.getInstance(Locale.getDefault());
                             mCalendar.add(Calendar.MONTH, mCurrentMonthIndex);
@@ -1074,7 +1103,7 @@ public class CalendarView extends LinearLayout {
     }
 
     /**
-     *  Attributes setters and getters.
+     * Attributes setters and getters.
      */
 
     public void setOnMonthTitleClickListener(OnMonthTitleClickListener onMonthTitleClickListener) {
@@ -1199,5 +1228,13 @@ public class CalendarView extends LinearLayout {
 
     public boolean isOverflowDateVisible() {
         return mIsOverflowDateVisible;
+    }
+
+    public List<Date> getEventDates() {
+        return eventDates;
+    }
+
+    public void setEventDates(List<Date> eventDates) {
+        this.eventDates = eventDates;
     }
 }

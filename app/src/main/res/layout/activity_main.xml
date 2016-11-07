@@ -38,6 +38,7 @@
                         app:dayOfWeekTextColor="@android:color/white"
                         app:disabledDayBackgroundColor="@color/colorPrimary"
                         app:disabledDayTextColor="@color/colorAccent"
+                        app:dayOfWeekTextEventColor="#AA00FF"
                         app:selectedDayBackgroundColor="@color/colorAccent"
                         app:titleLayoutBackgroundColor="@color/colorPrimary"
                         app:weekLayoutBackgroundColor="@color/colorPrimary"

@@ -641,6 +641,12 @@ public class CalendarView extends LinearLayout {
         setDaysInCalendar();
     }
 
+    public void refreshCalendar() {
+        mCalendar = Calendar.getInstance(Locale.getDefault());
+        mCalendar.add(Calendar.MONTH, mCurrentMonthIndex);
+        refreshCalendar(mCalendar);
+    }
+
     private void setTotalDayOfWeekend() {
         int[] weekendDay = new int[Integer.bitCount(mWeekend)];
         char days[] = Integer.toBinaryString(mWeekend).toCharArray();
